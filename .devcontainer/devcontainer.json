@@ -1,0 +1,21 @@
+{
+  "name": "Apprendre avec un harness IA",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "remoteUser": "vscode",
+  "remoteEnv": {
+    "MISE_DATA_DIR": "/home/vscode/.local/share/mise",
+    "PATH": "${containerWorkspaceFolder}/node_modules/.bin:/home/vscode/.local/share/mise/shims:${containerEnv:PATH}"
+  },
+  "postCreateCommand": "mise trust && mise install node bun && mise reshim && bun install --frozen-lockfile --ignore-scripts && bun run configurer:agent && pi --version",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "workbench.secondarySideBar.defaultVisibility": "hidden",
+        "workbench.startupEditor": "none"
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "Projet avec Pi",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "24.15.0"
+    }
+  },
+  "remoteUser": "vscode",
+  "remoteEnv": {
+    "PATH": "/home/vscode/.local/share/pi/node_modules/.bin:${containerEnv:PATH}"
+  },
+  "postCreateCommand": {
+    "pi": "npm install --prefix /home/vscode/.local/share/pi --ignore-scripts --no-audit --no-fund @earendil-works/pi-coding-agent@1.4.0",
+    "connexion": "node -e 'const fs = require(\"node:fs\");\nconst path = require(\"node:path\");\nconst { isDeepStrictEqual } = require(\"node:util\");\nconst provider = {\"name\":\"Passerelle de l’atelier\",\"baseUrl\":\"https://litellm.dverge.zone/v1\",\"api\":\"openai-responses\",\"apiKey\":\"$WORKSHOP_API_KEY\",\"authHeader\":true,\"models\":[{\"id\":\"gpt-luna\",\"reasoning\":true,\"thinkingLevelMap\":{\"xhigh\":\"xhigh\"},\"input\":[\"text\"],\"contextWindow\":32768,\"maxTokens\":4096},{\"id\":\"gpt-sol\",\"reasoning\":true,\"thinkingLevelMap\":{\"high\":null,\"xhigh\":null,\"max\":null},\"input\":[\"text\"],\"contextWindow\":32768,\"maxTokens\":4096},{\"id\":\"claude-sonnet\",\"reasoning\":true,\"thinkingLevelMap\":{\"high\":null,\"xhigh\":null,\"max\":null},\"input\":[\"text\"],\"contextWindow\":32768,\"maxTokens\":4096}]};\nconst dir = path.join(require(\"node:os\").homedir(), \".pi\", \"agent\");\nconst file = path.join(dir, \"models.json\");\nconst defaults = {\"$schema\":\"https://pi.dev/schemas/settings.schema.json\",\"defaultProvider\":\"atelier\",\"defaultModel\":\"gpt-luna\",\"defaultThinkingLevel\":\"xhigh\",\"modelThinkingLevels\":{\"atelier/gpt-luna\":\"xhigh\",\"atelier/gpt-sol\":\"medium\",\"atelier/claude-sonnet\":\"medium\"},\"enabledModels\":[\"atelier/gpt-luna\",\"atelier/gpt-sol\",\"atelier/claude-sonnet\"],\"transport\":\"sse\",\"compaction\":{\"reserveTokens\":8192,\"keepRecentTokens\":12000},\"retry\":{\"enabled\":false,\"provider\":{\"maxRetries\":2,\"maxRetryDelayMs\":60000}},\"defaultTools\":[\"read\",\"grep\",\"find\",\"ls\"]};\nconst settingsFile = path.join(dir, \"settings.json\");\ntry {\n  let settings = {};\n  try {\n    const info = fs.lstatSync(settingsFile);\n    if (!info.isFile()) throw Error(\"settings.json doit être un fichier ordinaire.\");\n    try { settings = JSON.parse(fs.readFileSync(settingsFile, \"utf8\")); } catch { throw Error(\"settings.json invalide.\"); }\n  } catch (error) { if (error.code !== \"ENOENT\") throw error; }\n  if (!settings || typeof settings !== \"object\" || Array.isArray(settings)) throw Error(\"settings.json invalide.\");\n  for (const [key, value] of Object.entries(defaults)) {\n    if (Object.hasOwn(settings, key) && !isDeepStrictEqual(settings[key], value)) throw Error(\"Réglage Pi différent : \" + key + \"; examine-le avant de relancer.\");\n  }\n  let config = {};\n  if (fs.existsSync(file) || (() => { try { fs.lstatSync(file); return true; } catch { return false; } })()) {\n    if (!fs.lstatSync(file).isFile()) throw Error(\"models.json doit être un fichier ordinaire.\");\n    try { config = JSON.parse(fs.readFileSync(file, \"utf8\")); } catch { throw Error(\"models.json invalide ; examine-le sans publier son contenu.\"); }\n  }\n  const objet = value => value && typeof value === \"object\" && !Array.isArray(value);\n  if (!objet(config) || (config.providers !== undefined && !objet(config.providers))) throw Error(\"Configuration Pi invalide.\");\n  config.providers ??= {};\n  if (Object.hasOwn(config.providers, \"atelier\")) {\n    if (!isDeepStrictEqual(config.providers.atelier, provider)) throw Error(\"Le fournisseur atelier existe et diffère ; renomme-le avant de relancer.\");\n  } else {\n    config.providers.atelier = provider;\n    fs.mkdirSync(dir, { recursive: true, mode: 0o700 });\n    const temp = fs.mkdtempSync(path.join(dir, \".configuration-\"));\n    try {\n      const output = path.join(temp, \"models.json\");\n      fs.writeFileSync(output, JSON.stringify(config, null, 2) + \"\\n\", { mode: 0o600 });\n      fs.renameSync(output, file);\n    } finally { fs.rmSync(temp, { recursive: true, force: true }); }\n  }\n  fs.mkdirSync(dir, { recursive: true, mode: 0o700 });\n  const settingsText = JSON.stringify({ ...settings, ...defaults }, null, 2) + \"\\n\";\n  if (!fs.existsSync(settingsFile) || fs.readFileSync(settingsFile, \"utf8\") !== settingsText) {\n    const temp = fs.mkdtempSync(path.join(dir, \".reglages-\"));\n    try {\n      const output = path.join(temp, \"settings.json\");\n      fs.writeFileSync(output, settingsText, { mode: 0o600 });\n      fs.renameSync(output, settingsFile);\n    } finally { fs.rmSync(temp, { recursive: true, force: true }); }\n  }\n  console.log(\"Connexion et réglages Pi configurés ; aucune clé enregistrée.\");\n} catch (error) { console.error(error.message); process.exitCode = 1; }'"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "workbench.secondarySideBar.defaultVisibility": "hidden",
+        "workbench.startupEditor": "none"
+      }
+    }
+  }
+}

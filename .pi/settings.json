@@ -1,0 +1,19 @@
+{
+  "$schema": "https://pi.dev/schemas/settings.schema.json",
+  "defaultProvider": "atelier",
+  "defaultModel": "gpt-luna",
+  "defaultThinkingLevel": "xhigh",
+  "modelThinkingLevels": {
+    "atelier/gpt-luna": "xhigh",
+    "atelier/gpt-sol": "medium",
+    "atelier/claude-sonnet": "medium"
+  },
+  "enabledModels": ["atelier/gpt-luna", "atelier/gpt-sol", "atelier/claude-sonnet"],
+  "transport": "sse",
+  "compaction": { "reserveTokens": 8192, "keepRecentTokens": 12000 },
+  "retry": {
+    "enabled": false,
+    "provider": { "maxRetries": 2, "maxRetryDelayMs": 60000 }
+  },
+  "defaultTools": ["read", "grep", "find", "ls"]
+}

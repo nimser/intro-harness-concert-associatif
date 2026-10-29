@@ -1,0 +1,17 @@
+{
+  "name": "intro-harness-concert-associatif",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "configurer:agent": "bun scripts/configurer-agent.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "verifier": "bun .agents/skills/verifier-hypothese/scripts/verifier.ts"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "1.4.0",
+    "@types/bun": "1.4.4",
+    "typescript": "5.9.3"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://pi.dev/schemas/models.schema.json",
+  "providers": {
+    "atelier": {
+      "name": "Passerelle de l’atelier",
+      "baseUrl": "https://litellm.dverge.zone/v1",
+      "api": "openai-responses",
+      "apiKey": "$WORKSHOP_API_KEY",
+      "authHeader": true,
+      "models": [
+        {
+          "id": "gpt-luna",
+          "reasoning": true,
+          "thinkingLevelMap": { "xhigh": "xhigh" },
+          "input": ["text"],
+          "contextWindow": 32768,
+          "maxTokens": 4096
+        },
+        {
+          "id": "gpt-sol",
+          "reasoning": true,
+          "thinkingLevelMap": { "high": null, "xhigh": null, "max": null },
+          "input": ["text"],
+          "contextWindow": 32768,
+          "maxTokens": 4096
+        },
+        {
+          "id": "claude-sonnet",
+          "reasoning": true,
+          "thinkingLevelMap": { "high": null, "xhigh": null, "max": null },
+          "input": ["text"],
+          "contextWindow": 32768,
+          "maxTokens": 4096
+        }
+      ]
+    }
+  }
+}
